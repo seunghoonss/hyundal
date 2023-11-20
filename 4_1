@@ -1,29 +1,27 @@
-function dfs(matrix, x, y, N) {
-    if (x < 0 || y < 0 || x >= N || y >= N || matrix[x][y] === 0) {
+function dfs(matrix, x, y) {
+    if (x < 0 || y < 0 || x >= matrix.length || y >= matrix[0].length || matrix[x][y] === 0) {
         return 0;
     }
 
-    // 현재 셀을 방문 처리
-    matrix[x][y] = 0;
-    let size = 1;
+    matrix[x][y] = 0;  // 현재 위치를 방문 처리
+    let size = 1;  // 현재 셀의 크기
 
-    // 인접 셀 방문
-    size += dfs(matrix, x + 1, y, N);
-    size += dfs(matrix, x - 1, y, N);
-    size += dfs(matrix, x, y + 1, N);
-    size += dfs(matrix, x, y - 1, N);
+    // 인접한 셀 방문
+    size += dfs(matrix, x + 1, y);
+    size += dfs(matrix, x - 1, y);
+    size += dfs(matrix, x, y + 1);
+    size += dfs(matrix, x, y - 1);
 
     return size;
 }
 
 function findRegions(matrix) {
-    const N = matrix.length;
-    let regionSizes = [];
+    const regionSizes = [];
 
-    for (let i = 0; i < N; i++) {
-        for (let j = 0; j < N; j++) {
+    for (let i = 0; i < matrix.length; i++) {
+        for (let j = 0; j < matrix[0].length; j++) {
             if (matrix[i][j] === 1) {
-                regionSizes.push(dfs(matrix, i, j, N));
+                regionSizes.push(dfs(matrix, i, j));
             }
         }
     }
@@ -31,8 +29,8 @@ function findRegions(matrix) {
     return regionSizes.sort((a, b) => a - b);
 }
 
-// 예제 입력
-let matrix = [
+// 예시 입력을 코드에 맞게 변환
+const inputMatrix1 = [
     [0, 1, 1, 0, 0, 0],
     [0, 1, 1, 0, 1, 1],
     [0, 0, 0, 0, 1, 1],
@@ -41,6 +39,23 @@ let matrix = [
     [1, 1, 1, 0, 0, 0]
 ];
 
-let regionSizes = findRegions(matrix);
-console.log(regionSizes.length);
-console.log(regionSizes.join(' '));
+const inputMatrix2 = [[0]];
+const inputMatrix3 = [[1]];
+
+// 결과 출력
+function printResult(matrix) {
+    const regions = findRegions(matrix);
+    console.log(regions.length);
+    if (regions.length > 0) {
+        console.log(regions.join(' '));
+    }
+}
+
+console.log("Example 1:");
+printResult(inputMatrix1);
+
+console.log("\nExample 2:");
+printResult(inputMatrix2);
+
+console.log("\nExample 3:");
+printResult(inputMatrix3);
