@@ -97,4 +97,15 @@ public class TradingGame {
         Route bestRoute = null;
         for (Route route : routes) {
             if (bestRoute == null || route.profit > bestRoute.profit || (route.profit == bestRoute.profit && route.fuelLeft > bestRoute.fuelLeft)) {
-               
+                bestRoute = route;
+            }
+        }
+
+        if (bestRoute != null) {
+            System.out.println(String.join(" ", bestRoute.path) + " " + bestRoute.profit + " " + bestRoute.fuelLeft);
+        } else {
+            System.out.println("-1");
+        }
+    }
+}
+ 
