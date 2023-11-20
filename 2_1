@@ -1,0 +1,100 @@
+이 문제를 해결하기 위해서는 먼저 주어진 마을들과 경로들로 그래프를 구성하고, 이 그래프를 통해 가능한 모든 경로를 탐색하여 각 경로에 대한 최종 수익과 남은 연료량을 계산해야 합니다. 이를 위해 다음과 같은 접근 방법을 사용할 수 있습니다:
+
+그래프 구성: 마을들과 그들 사이의 경로를 이용하여 그래프를 생성합니다.
+
+경로 탐색: 시작 마을(A)에서 목적지 마을(H)까지 모든 가능한 경로를 탐색합니다. 이 과정에서 깊이 우선 탐색(DFS) 알고리즘을 사용할 수 있습니다.
+
+수익 및 연료 계산: 각 경로에 대해 마을을 방문할 때마다 특산품을 사고팔면서 얻는 수익과 사용하는 연료를 계산합니다.
+
+최적 경로 선정: 가능한 경로 중 최종 수익이 가장 크고, 연료 소모가 가장 적은 경로를 선택합니다.
+
+아래는 이러한 접근 방법을 구현한 Java 코드의 예시입니다:
+
+java
+Copy code
+import java.util.*;
+
+public class TradingGame {
+
+    static class Village {
+        String name;
+        Map<Village, Integer> neighbors;
+
+        Village(String name) {
+            this.name = name;
+            this.neighbors = new HashMap<>();
+        }
+
+        void addNeighbor(Village neighbor, int distance) {
+            neighbors.put(neighbor, distance);
+        }
+    }
+
+    static class Route {
+        List<String> path;
+        int profit;
+        int fuelLeft;
+
+        Route(List<String> path, int profit, int fuelLeft) {
+            this.path = path;
+            this.profit = profit;
+            this.fuelLeft = fuelLeft;
+        }
+    }
+
+    static List<Route> findRoutes(Village current, Set<String> visited, int budget, int fuel, List<String> path) {
+        visited.add(current.name);
+        path.add(current.name);
+
+        List<Route> routes = new ArrayList<>();
+
+        if (current.name.equals("H")) {
+            routes.add(new Route(new ArrayList<>(path), budget, fuel));
+        } else {
+            for (Map.Entry<Village, Integer> entry : current.neighbors.entrySet()) {
+                Village next = entry.getKey();
+                int distance = entry.getValue();
+
+                if (!visited.contains(next.name) && fuel >= distance) {
+                    int newBudget = budget;
+                    int newFuel = fuel - distance;
+
+                    // A 마을에서는 구매만, H 마을에서는 판매만
+                    if (!current.name.equals("A") && !next.name.equals("H")) {
+                        newBudget += 200; // 판매 후 구매
+                    }
+
+                    if (next.name.equals("H")) {
+                        newBudget += 300; // H 마을에서 판매
+                    }
+
+                    routes.addAll(findRoutes(next, new HashSet<>(visited), newBudget, newFuel, new ArrayList<>(path)));
+                }
+            }
+        }
+
+        path.remove(path.size() - 1);
+        return routes;
+    }
+
+    public static void main(String[] args) {
+        Map<String, Village> villages = new HashMap<>();
+        for (char c = 'A'; c <= 'H'; c++) {
+            villages.put(String.valueOf(c), new Village(String.valueOf(c)));
+        }
+
+        // 경로 설정
+        villages.get("A").addNeighbor(villages.get("B"), 3);
+        villages.get("B").addNeighbor(villages.get("C"), 5);
+        villages.get("C").addNeighbor(villages.get("F"), 2);
+        villages.get("F").addNeighbor(villages.get("G"), 2);
+        villages.get("A").addNeighbor(villages.get("D"), 5);
+        villages.get("D").addNeighbor(villages.get("E"), 10);
+        villages.get("E").addNeighbor(villages.get("H"), 30);
+
+        List<Route> routes = findRoutes(villages.get("A"), new HashSet<>(), 100, 30, new ArrayList<>());
+
+        Route bestRoute = null;
+        for (Route route : routes) {
+            if (bestRoute == null || route.profit > bestRoute.profit || (route.profit == bestRoute.profit && route.fuelLeft > bestRoute.fuelLeft)) {
+               
