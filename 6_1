@@ -1,0 +1,42 @@
+function incrementCounter(maxValues, currentValues, times) {
+    const n = maxValues.length;
+    
+    // 초깃값이 최댓값보다 크거나 같은 경우는 에러
+    for (let i = 0; i < n; i++) {
+        if (currentValues[i] > maxValues[i]) {
+            return -1;
+        }
+    }
+
+    // 주어진 횟수만큼 카운트 증가
+    for (let i = 0; i < times; i++) {
+        for (let j = n - 1; j >= 0; j--) {
+            if (currentValues[j] < maxValues[j]) {
+                currentValues[j]++;
+                break;
+            } else {
+                currentValues[j] = 0;
+            }
+        }
+    }
+
+    return currentValues.join('');
+}
+
+// 예시 입력
+const maxValues1 = [7, 8];
+const currentValues1 = [3, 5];
+const times1 = 17;
+
+const maxValues2 = [8, 6, 9, 7, 7];
+const currentValues2 = [1, 4, 5, 2, 3];
+const times2 = 361;
+
+const maxValues3 = [1, 2, 3, 4, 5];
+const currentValues3 = [9, 8, 7, 6, 5];
+const times3 = 793;
+
+// 결과 출력
+console.log(incrementCounter(maxValues1, currentValues1, times1)); // 54
+console.log(incrementCounter(maxValues2, currentValues2, times2)); // 15074
+console.log(incrementCounter(maxValues3, currentValues3, times3)); // -1
