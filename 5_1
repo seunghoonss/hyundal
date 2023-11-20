@@ -55,7 +55,10 @@ function processCommands(dns, commands) {
                 output += dns.search(args[0]) + '\n';
                 break;
             case 'A':
-                output += dns.autocomplete(args[0]).join('\n') + '\n';
+                if (args[0]) {
+                    const results = dns.autocomplete(args[0]);
+                    output += results.join('\n') + '\n';
+                }
                 break;
         }
     }
