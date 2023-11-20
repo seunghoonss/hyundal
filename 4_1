@@ -1,0 +1,51 @@
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+public class MatrixDomain {
+
+    private static int dfs(int[][] matrix, int x, int y, int N) {
+        if (x < 0 || y < 0 || x >= N || y >= N || matrix[x][y] == 0) {
+            return 0;
+        }
+
+        // Mark the current cell as visited
+        matrix[x][y] = 0;
+        int size = 1;
+
+        // Visit all adjacent cells
+        size += dfs(matrix, x + 1, y, N);
+        size += dfs(matrix, x - 1, y, N);
+        size += dfs(matrix, x, y + 1, N);
+        size += dfs(matrix, x, y - 1, N);
+
+        return size;
+    }
+
+    public static void main(String[] args) {
+        int N = 6; // Matrix size
+        int[][] matrix = {
+            {0, 1, 1, 0, 0, 0},
+            {0, 1, 1, 0, 1, 1},
+            {0, 0, 0, 0, 1, 1},
+            {0, 0, 0, 0, 1, 1},
+            {1, 1, 0, 0, 1, 0},
+            {1, 1, 1, 0, 0, 0}
+        };
+
+        List<Integer> regionSizes = new ArrayList<>();
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < N; j++) {
+                if (matrix[i][j] == 1) {
+                    regionSizes.add(dfs(matrix, i, j, N));
+                }
+            }
+        }
+
+        Collections.sort(regionSizes);
+        System.out.println(regionSizes.size());
+        for (int size : regionSizes) {
+            System.out.print(size + " ");
+        }
+    }
+}
