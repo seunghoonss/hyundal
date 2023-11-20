@@ -43,12 +43,13 @@ public class RiverCrossingPuzzle {
         Set<String> otherBank = currentState.boatOnLeft ? currentState.rightBank : currentState.leftBank;
         Set<State> nextStates = new HashSet<>();
 
-        for (String entity : movers) {
-            if (currentBank.contains(entity)) {
+        // Generate all possible combinations of moves
+        for (String mover : movers) {
+            if (currentBank.contains(mover)) {
                 Set<String> newCurrentBank = new HashSet<>(currentBank);
                 Set<String> newOtherBank = new HashSet<>(otherBank);
-                newCurrentBank.remove(entity);
-                newOtherBank.add(entity);
+                newCurrentBank.remove(mover);
+                newOtherBank.add(mover);
 
                 State newState = new State(currentState.boatOnLeft ? newCurrentBank : newOtherBank,
                                            currentState.boatOnLeft ? newOtherBank : newCurrentBank,
@@ -101,9 +102,4 @@ public class RiverCrossingPuzzle {
             Arrays.asList("fox", "goose"),
             Arrays.asList("goose", "beans")
         );
-        List<List<String>> noRide = new ArrayList<>();
-
-        int result = solve(boatSize, entities, movers, noLeave, noRide);
-        System.out.println(result); // 결과 출력
-    }
-}
+        List<List<String
