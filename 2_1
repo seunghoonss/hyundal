@@ -1,6 +1,6 @@
 import java.util.*;
 
-public class TradingGame {
+class TradingGame {
 
     static class Village {
         String name;
