@@ -1,0 +1,109 @@
+import java.util.*;
+
+public class RiverCrossingPuzzle {
+
+    static class State {
+        Set<String> leftBank;
+        Set<String> rightBank;
+        boolean boatOnLeft;
+
+        public State(Set<String> leftBank, Set<String> rightBank, boolean boatOnLeft) {
+            this.leftBank = new HashSet<>(leftBank);
+            this.rightBank = new HashSet<>(rightBank);
+            this.boatOnLeft = boatOnLeft;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            State state = (State) o;
+            return boatOnLeft == state.boatOnLeft &&
+                    Objects.equals(leftBank, state.leftBank) &&
+                    Objects.equals(rightBank, state.rightBank);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(leftBank, rightBank, boatOnLeft);
+        }
+    }
+
+    public static boolean isValidState(Set<String> bank, List<List<String>> noLeave) {
+        for (List<String> forbiddenCombo : noLeave) {
+            if (bank.containsAll(forbiddenCombo)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static Set<State> getValidNextStates(State currentState, int boatSize, List<String> movers, List<List<String>> noLeave) {
+        Set<String> currentBank = currentState.boatOnLeft ? currentState.leftBank : currentState.rightBank;
+        Set<String> otherBank = currentState.boatOnLeft ? currentState.rightBank : currentState.leftBank;
+        Set<State> nextStates = new HashSet<>();
+
+        for (String entity : movers) {
+            if (currentBank.contains(entity)) {
+                Set<String> newCurrentBank = new HashSet<>(currentBank);
+                Set<String> newOtherBank = new HashSet<>(otherBank);
+                newCurrentBank.remove(entity);
+                newOtherBank.add(entity);
+
+                State newState = new State(currentState.boatOnLeft ? newCurrentBank : newOtherBank,
+                                           currentState.boatOnLeft ? newOtherBank : newCurrentBank,
+                                           !currentState.boatOnLeft);
+
+                if (isValidState(newOtherBank, noLeave) && isValidState(newCurrentBank, noLeave)) {
+                    nextStates.add(newState);
+                }
+            }
+        }
+
+        return nextStates;
+    }
+
+    public static int solve(int boatSize, List<String> entities, List<String> movers, List<List<String>> noLeave, List<List<String>> noRide) {
+        Set<String> startLeftBank = new HashSet<>(entities);
+        Set<String> startRightBank = new HashSet<>();
+
+        State startState = new State(startLeftBank, startRightBank, true);
+        State goalState = new State(startRightBank, startLeftBank, false);
+
+        Queue<State> queue = new LinkedList<>();
+        Map<State, Integer> distance = new HashMap<>();
+        queue.add(startState);
+        distance.put(startState, 0);
+
+        while (!queue.isEmpty()) {
+            State currentState = queue.poll();
+            if (currentState.equals(goalState)) {
+                return distance.get(currentState);
+            }
+
+            for (State nextState : getValidNextStates(currentState, boatSize, movers, noLeave)) {
+                if (!distance.containsKey(nextState)) {
+                    queue.add(nextState);
+                    distance.put(nextState, distance.get(currentState) + 1);
+                }
+            }
+        }
+
+        return -1; // 해결 불가능한 경우
+    }
+
+    public static void main(String[] args) {
+        // 예제 입력에 따른 설정
+        int boatSize = 2;
+        List<String> entities = Arrays.asList("farmer", "fox", "goose", "beans");
+        List<String> movers = Collections.singletonList("farmer");
+        List<List<String>> noLeave = Arrays.asList(
+            Arrays.asList("fox", "goose"),
+            Arrays.asList("goose", "beans")
+        );
+        List<List<String>> noRide = new ArrayList<>();
+
+        int result = solve(boatSize, entities, movers, noLeave, noRide);
+        System.out.println(result); // 결과 출력
+    }
+}
