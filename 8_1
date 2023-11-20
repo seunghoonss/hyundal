@@ -1,0 +1,61 @@
+function rotateMatrix(matrix, rotation) {
+    const n = matrix.length;
+    let layers = Math.floor(n / 2);
+
+    for (let layer = 0; layer < layers; layer++) {
+        let currentRotation = rotation;
+        if (layer % 2 === 0) {
+            currentRotation = -currentRotation; // 홀수 행렬은 반시계 방향으로 시작
+        }
+
+        let perimeter = 2 * (n - 2 * layer - 1) * 2;
+        currentRotation = ((currentRotation % perimeter) + perimeter) % perimeter;
+
+        for (let i = 0; i < currentRotation; i++) {
+            rotateLayer(matrix, layer);
+        }
+    }
+
+    return matrix;
+}
+
+function rotateLayer(matrix, layer) {
+    const n = matrix.length;
+    let temp = matrix[layer][layer];
+
+    // Top row
+    for (let i = layer; i < n - layer - 1; i++) {
+        matrix[layer][i] = matrix[layer][i + 1];
+    }
+
+    // Right column
+    for (let i = layer; i < n - layer - 1; i++) {
+        matrix[i][n - layer - 1] = matrix[i + 1][n - layer - 1];
+    }
+
+    // Bottom row
+    for (let i = n - layer - 1; i > layer; i--) {
+        matrix[n - layer - 1][i] = matrix[n - layer - 1][i - 1];
+    }
+
+    // Left column
+    for (let i = n - layer - 1; i > layer + 1; i--) {
+        matrix[i][layer] = matrix[i - 1][layer];
+    }
+
+    matrix[layer + 1][layer] = temp;
+}
+
+// 예시 입력 및 출력
+let matrix1 = [
+    ["강미나", "김도연", "김세정", "김소혜", "김청하"],
+    ["유연정", "임나영", "전소미", "정채연", "주결경"],
+    ["최유정", "강시라", "기희현", "김나영", "김소희"],
+    ["박소연", "윤채경", "이해인", "전소연", "정은우"],
+    ["한혜리", "강예빈", "권은빈", "김다니", "김서경"]
+];
+console.log(rotateMatrix(matrix1, -2).map(row => row.join(' ')).join('\n'));
+
+let matrix2 = [
+    ["강미나", "김도연", "김세정"],
+   
