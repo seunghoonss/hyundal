@@ -1,0 +1,73 @@
+class DNSManager {
+    constructor() {
+        this.domainToIP = new Map();
+        this.ipToDomain = new Map();
+    }
+
+    // 도메인과 IP 주소(또는 대역) 등록
+    register(domain, ip) {
+        // ... (기존 등록 로직)
+    }
+
+    // 도메인 또는 IP 주소로 검색
+    search(query) {
+        // ... (기존 검색 로직)
+    }
+
+    // 자동완성 기능
+    autocomplete(prefix) {
+        // ... (자동완성 로직)
+    }
+
+    // IP 주소를 숫자로 변환
+    ipToNumber(ip) {
+        // ... (기존 로직)
+    }
+
+    // 숫자를 IP 주소로 변환
+    numberToIP(num) {
+        // ... (기존 로직)
+    }
+}
+
+function processCommands(commands) {
+    const dns = new DNSManager();
+    let output = "";
+
+    for (const command of commands) {
+        const [cmd, ...args] = command.split(' ');
+        switch (cmd) {
+            case 'R':
+                dns.register(args[0], args[1]);
+                break;
+            case 'S':
+                output += dns.search(args[0]) + '\n';
+                break;
+            case 'A':
+                output += dns.autocomplete(args[0]).join('\n') + '\n';
+                break;
+        }
+    }
+
+    return output.trim();
+}
+
+// 예제에 따른 명령 처리
+const exampleCommands1 = ["S nonexistent.domain"];
+const exampleCommands2 = ["R www.hello.com 104.75.17.87", "S www.hello.com"];
+const exampleCommands3 = ["R youtube.com 172.216.24.0-172.216.24.255", "S youtube.com"];
+// 예제 4, 5, 6에 대한 명령 처리
+const exampleCommands4 = ["R www.hello.com 104.75.17.87", "S 104.75.17.87"];
+const exampleCommands5 = ["R youtube.com 172.216.24.0-172.216.24.255", "S 172.216.24.5"];
+const exampleCommands6 = ["A 800"]; // 이 예제는 '800'으로 시작하는 도메인 이름이 필요
+
+console.log(processCommands(exampleCommands1));
+console.log(processCommands(exampleCommands2));
+console.log(processCommands(exampleCommands3));
+
+
+console.log(processCommands(exampleCommands4));
+
+console.log(processCommands(exampleCommands5));
+
+console.log(processCommands(exampleCommands6));
