@@ -1,51 +1,46 @@
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-public class MatrixDomain {
-
-    private static int dfs(int[][] matrix, int x, int y, int N) {
-        if (x < 0 || y < 0 || x >= N || y >= N || matrix[x][y] == 0) {
-            return 0;
-        }
-
-        // Mark the current cell as visited
-        matrix[x][y] = 0;
-        int size = 1;
-
-        // Visit all adjacent cells
-        size += dfs(matrix, x + 1, y, N);
-        size += dfs(matrix, x - 1, y, N);
-        size += dfs(matrix, x, y + 1, N);
-        size += dfs(matrix, x, y - 1, N);
-
-        return size;
+function dfs(matrix, x, y, N) {
+    if (x < 0 || y < 0 || x >= N || y >= N || matrix[x][y] === 0) {
+        return 0;
     }
 
-    public static void main(String[] args) {
-        int N = 6; // Matrix size
-        int[][] matrix = {
-            {0, 1, 1, 0, 0, 0},
-            {0, 1, 1, 0, 1, 1},
-            {0, 0, 0, 0, 1, 1},
-            {0, 0, 0, 0, 1, 1},
-            {1, 1, 0, 0, 1, 0},
-            {1, 1, 1, 0, 0, 0}
-        };
+    // 현재 셀을 방문 처리
+    matrix[x][y] = 0;
+    let size = 1;
 
-        List<Integer> regionSizes = new ArrayList<>();
-        for (int i = 0; i < N; i++) {
-            for (int j = 0; j < N; j++) {
-                if (matrix[i][j] == 1) {
-                    regionSizes.add(dfs(matrix, i, j, N));
-                }
+    // 인접 셀 방문
+    size += dfs(matrix, x + 1, y, N);
+    size += dfs(matrix, x - 1, y, N);
+    size += dfs(matrix, x, y + 1, N);
+    size += dfs(matrix, x, y - 1, N);
+
+    return size;
+}
+
+function findRegions(matrix) {
+    const N = matrix.length;
+    let regionSizes = [];
+
+    for (let i = 0; i < N; i++) {
+        for (let j = 0; j < N; j++) {
+            if (matrix[i][j] === 1) {
+                regionSizes.push(dfs(matrix, i, j, N));
             }
         }
-
-        Collections.sort(regionSizes);
-        System.out.println(regionSizes.size());
-        for (int size : regionSizes) {
-            System.out.print(size + " ");
-        }
     }
+
+    return regionSizes.sort((a, b) => a - b);
 }
+
+// 예제 입력
+let matrix = [
+    [0, 1, 1, 0, 0, 0],
+    [0, 1, 1, 0, 1, 1],
+    [0, 0, 0, 0, 1, 1],
+    [0, 0, 0, 0, 1, 1],
+    [1, 1, 0, 0, 1, 0],
+    [1, 1, 1, 0, 0, 0]
+];
+
+let regionSizes = findRegions(matrix);
+console.log(regionSizes.length);
+console.log(regionSizes.join(' '));
